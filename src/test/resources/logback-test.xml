@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Console appender for test output -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Suppress debug logs from Docker Java library -->
+    <logger name="com.github.dockerjava.zerodep" level="WARN" />
+    <logger name="org.testcontainers.shaded.com.github.dockerjava" level="WARN" />
+    <logger name="com.github.dockerjava" level="WARN" />
+    
+    <!-- Suppress other noisy testcontainers internal logs -->
+    <logger name="org.testcontainers.utility.RegistryAuthLocator" level="WARN" />
+    <logger name="org.testcontainers.utility.ImageNameSubstitutor" level="WARN" />
+    <logger name="org.testcontainers.dockerclient" level="WARN" />
+    <logger name="org.testcontainers.images" level="WARN" />
+    
+    <!-- Keep testcontainer lifecycle logs at INFO level -->
+    <logger name="org.testcontainers" level="INFO" />
+    
+    <!-- Keep our application logs visible -->
+    <logger name="web3.beaglegaze" level="DEBUG" />
+    
+    <!-- Web3j protocol logs can be reduced -->
+    <logger name="org.web3j.protocol.http.HttpService" level="WARN" />
+
+    <!-- Root logger set to INFO to reduce overall noise -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
