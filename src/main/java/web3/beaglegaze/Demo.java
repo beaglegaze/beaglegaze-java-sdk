@@ -1,5 +1,7 @@
 package web3.beaglegaze;
 
+import web3.beaglegaze.PayPerCall;
+
 public class Demo {
 
     @PayPerCall(price = 1L)
