@@ -6,9 +6,10 @@
 
     <groupId>web3.beaglegaze</groupId>
     <artifactId>beaglegaze-java-sdk</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
 
     <properties>
+        <revision>1.0-SNAPSHOT</revision>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
