@@ -50,6 +50,9 @@ jobs:
           distribution: "temurin"
           cache: maven
 
+      - name: Build custom Docker image
+        run: docker build -t hardhat-testnet src/test/resources/testcontainer/.
+
       - name: Deploy to GitHub Packages
         run: mvn -B deploy
         env:
