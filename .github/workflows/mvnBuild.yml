@@ -49,9 +49,6 @@ jobs:
           java-version: "21"
           distribution: "temurin"
           cache: maven
-          server-id: github
-          server-username: GITHUB_ACTOR
-          server-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract version from tag
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
@@ -61,3 +58,5 @@ jobs:
 
       - name: Deploy to GitHub Packages
         run: mvn -B deploy -Drevision=${{ env.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
