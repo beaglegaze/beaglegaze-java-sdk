@@ -149,4 +149,11 @@ contract UsageContract {
         (bool sent, ) = msg.sender.call{value: balance}("");
         require(sent, "Failed to withdraw balance");
     }
+
+    function purchaseSubscription(uint256 tierIndex) external payable {
+    }
+
+    function hasValidSubscription() external pure returns (bool) {
+        return false;
+    }
 }
