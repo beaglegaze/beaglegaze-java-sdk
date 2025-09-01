@@ -1,12 +1,12 @@
 package web3.beaglegaze;
 
-import web3.beaglegaze.PayPerCall;
-
 public class Demo {
+
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Demo.class);
 
     @PayPerCall(price = 1L)
     public void greet(String string) {
-        System.out.println("Demo.greet called with: " + string);
+        logger.info("Demo.greet called with: {}", string);
     }
     
 

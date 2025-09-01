@@ -25,7 +25,8 @@ public class SmartContract {
     private static final Logger LOG = LoggerFactory.getLogger(SmartContract.class);
     private int lowFundingThreshold;
 
-    public SmartContract(String contractAddress, String networkAddress, String clientPrivateKey, int lowFundingThreshold) throws Exception {
+    public SmartContract(String contractAddress, String networkAddress, String clientPrivateKey,
+            int lowFundingThreshold) throws Exception {
         this.lowFundingThreshold = lowFundingThreshold;
         contract = UsageContract_sol_UsageContract.load(
                 contractAddress,
@@ -53,7 +54,7 @@ public class SmartContract {
 
     private void logClientFundingIfLow() {
         contract.getClientFunding().sendAsync().thenAccept(value -> {
-            if(value.compareTo(BigInteger.ZERO) < lowFundingThreshold) {
+            if (value.compareTo(BigInteger.ZERO) < lowFundingThreshold) {
                 LOG.warn("Client funding is low. Consider refunding to avoid interruptions.");
             }
         });
@@ -65,6 +66,15 @@ public class SmartContract {
         } catch (Exception e) {
             e.printStackTrace();
             return BigInteger.ZERO;
+        }
+    }
+
+    public boolean hasValidSubscription() {
+        try {
+            return contract.hasValidSubscription().send();
+        } catch (Exception e) {
+            LOG.error("Failed to check subscription status: {}", e.getMessage());
+            return false;
         }
     }
 }
