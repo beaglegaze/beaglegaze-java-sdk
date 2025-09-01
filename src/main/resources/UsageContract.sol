@@ -14,10 +14,16 @@ contract UsageContract {
     mapping(address => mapping(address => bool)) private hasVoted;
     mapping(address => uint256) private voteCount; 
 
+    // NFT Subscription system
+    mapping(address => bool) private clientSubscriptions;
+    mapping(address => uint256) private subscriptionExpiry;
+    uint256 private constant SUBSCRIPTION_DURATION = 30 days;
+
     event DeveloperRegistered(address indexed developer);
     event ClientRegistered(address indexed client);
     event Funded(address indexed client, uint256 amount);
     event Consumed(address indexed client, uint256 amount);
+    event SubscriptionPurchased(address indexed client, uint256 indexed tierIndex, uint256 amount);
 
     constructor() {
         developers[msg.sender] = true;
@@ -71,7 +77,6 @@ contract UsageContract {
             emit DeveloperRegistered(developer);
         }
         
-        // Clean up voting data
         pendingRegistrations[developer] = false;
         voteCount[developer] = 0;
         for (uint256 i = 0; i < developerList.length; i++) {
@@ -95,7 +100,7 @@ contract UsageContract {
 
     function fund() external payable {
         require(msg.value > 0, "No funds sent");
-        clients[msg.sender] = true;
+        _ensureClientRegistered(msg.sender);
         clientFunding[msg.sender] += msg.value;
         emit Funded(msg.sender, msg.value);
     }
@@ -109,29 +114,18 @@ contract UsageContract {
         require(clientFunding[msg.sender] > 0, "No funds available for payout");
 
         uint256 amount = clientFunding[msg.sender];
-        
-        (bool sent, ) = msg.sender.call{value: amount}("");
-        require(sent, "Failed to send payout");
-        
         clientFunding[msg.sender] = 0;
+        _sendEther(msg.sender, amount);
     }
 
     function consume(uint256 amount) external returns (uint256) {
         emit Consumed(msg.sender, clientFunding[msg.sender]);
-        require(
-            clientFunding[msg.sender] >= amount,
-            "Insufficient client funding"
-        );
+        require(clientFunding[msg.sender] >= amount, "Insufficient client funding");
         require(developerList.length > 0, "No developers registered");
+        
         clientFunding[msg.sender] -= amount;
-        uint256 share = amount / developerList.length;
-        uint256 remainder = amount % developerList.length;
-        for (uint256 i = 0; i < developerList.length; i++) {
-            developerBalances[developerList[i]] += share;
-        }
-        if (remainder > 0) {
-            developerBalances[developerList[0]] += remainder;
-        }
+        _distributePaymentToDevelopers(amount);
+        
         return clientFunding[msg.sender];
     }
 
@@ -146,14 +140,53 @@ contract UsageContract {
         require(balance > 0, "No balance to withdraw");
         
         developerBalances[msg.sender] = 0;
-        (bool sent, ) = msg.sender.call{value: balance}("");
-        require(sent, "Failed to withdraw balance");
+        _sendEther(msg.sender, balance);
     }
 
     function purchaseSubscription(uint256 tierIndex) external payable {
+        require(msg.value > 0, "No payment provided");
+        
+        _ensureClientRegistered(msg.sender);
+        _grantSubscription(msg.sender);
+        _distributePaymentToDevelopers(msg.value);
+        
+        emit SubscriptionPurchased(msg.sender, tierIndex, msg.value);
     }
 
-    function hasValidSubscription() external pure returns (bool) {
-        return false;
+    function hasValidSubscription() external view returns (bool) {
+        return clientSubscriptions[msg.sender] && block.timestamp < subscriptionExpiry[msg.sender];
+    }
+
+    // Private helper methods
+    function _ensureClientRegistered(address client) private {
+        if (!clients[client]) {
+            clients[client] = true;
+            emit ClientRegistered(client);
+        }
+    }
+
+    function _grantSubscription(address client) private {
+        clientSubscriptions[client] = true;
+        subscriptionExpiry[client] = block.timestamp + SUBSCRIPTION_DURATION;
+    }
+
+    function _distributePaymentToDevelopers(uint256 amount) private {
+        if (developerList.length > 0) {
+            uint256 share = amount / developerList.length;
+            uint256 remainder = amount % developerList.length;
+            
+            for (uint256 i = 0; i < developerList.length; i++) {
+                developerBalances[developerList[i]] += share;
+            }
+            
+            if (remainder > 0) {
+                developerBalances[developerList[0]] += remainder;
+            }
+        }
+    }
+
+    function _sendEther(address recipient, uint256 amount) private {
+        (bool sent, ) = recipient.call{value: amount}("");
+        require(sent, "Failed to send Ether");
     }
 }
