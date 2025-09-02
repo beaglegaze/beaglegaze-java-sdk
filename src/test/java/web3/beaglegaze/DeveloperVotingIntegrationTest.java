@@ -3,6 +3,8 @@ package web3.beaglegaze;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.math.BigInteger;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.web3j.crypto.Credentials;
@@ -34,7 +36,7 @@ public class DeveloperVotingIntegrationTest extends IntegrationTestBase {
         return UsageContract_sol_UsageContract.deploy(
                 Web3j.build(new HttpService(networkAddress)),
                 Credentials.create(SMART_CONTRACT_OWNER),
-                new DefaultGasProvider()).send();
+                new DefaultGasProvider(), BigInteger.ZERO).send();
     }
 
     @Test

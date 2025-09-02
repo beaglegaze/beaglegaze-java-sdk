@@ -110,7 +110,7 @@ public class UsageContractIntegrationTest extends IntegrationTestBase {
         return UsageContract_sol_UsageContract.deploy(
                 Web3j.build(new HttpService(networkAddress)),
                 Credentials.create(SMART_CONTRACT_OWNER_PRIV_KEY),
-                new DefaultGasProvider()).send();
+                new DefaultGasProvider(), BigInteger.ZERO).send();
     }
 
     private UsageContract_sol_UsageContract loadContract(String networkAddress, String contractAddress,

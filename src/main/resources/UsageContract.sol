@@ -10,48 +10,61 @@ contract UsageContract {
 
     // Voting system for developer registration
     mapping(address => bool) private pendingRegistrations;
-    mapping(address => mapping(address => bool)) private votes; 
+    mapping(address => mapping(address => bool)) private votes;
     mapping(address => mapping(address => bool)) private hasVoted;
-    mapping(address => uint256) private voteCount; 
+    mapping(address => uint256) private voteCount;
 
     // NFT Subscription system
     mapping(address => bool) private clientSubscriptions;
-    mapping(address => uint256) private subscriptionExpiry;
-    uint256 private constant SUBSCRIPTION_DURATION = 30 days;
+    uint256 public subscriptionPriceInWei;
 
     event DeveloperRegistered(address indexed developer);
     event ClientRegistered(address indexed client);
     event Funded(address indexed client, uint256 amount);
     event Consumed(address indexed client, uint256 amount);
-    event SubscriptionPurchased(address indexed client, uint256 indexed tierIndex, uint256 amount);
+    event SubscriptionPurchased(
+        address indexed client
+    );
 
-    constructor() {
+    constructor(uint256 _subscriptionPriceInWei) {
         developers[msg.sender] = true;
         developerList.push(msg.sender);
         emit DeveloperRegistered(msg.sender);
+        subscriptionPriceInWei = _subscriptionPriceInWei;
     }
 
     function requestDeveloperRegistration() external {
         require(!developers[msg.sender], "Already registered as developer");
-        require(!pendingRegistrations[msg.sender], "Registration already pending");
-        
+        require(
+            !pendingRegistrations[msg.sender],
+            "Registration already pending"
+        );
+
         pendingRegistrations[msg.sender] = true;
         // Do not add to developerList or emit event yet - wait for voting
     }
 
-    function hasPendingRegistrationRequest(address developer) external view returns (bool) {
+    function hasPendingRegistrationRequest(
+        address developer
+    ) external view returns (bool) {
         return pendingRegistrations[developer];
     }
 
     function voteForDeveloper(address developer, bool approve) external {
         require(developers[msg.sender], "Only developers can vote");
-        require(pendingRegistrations[developer], "No pending registration for this developer");
-        require(!hasVoted[developer][msg.sender], "Already voted for this developer");
-        
+        require(
+            pendingRegistrations[developer],
+            "No pending registration for this developer"
+        );
+        require(
+            !hasVoted[developer][msg.sender],
+            "Already voted for this developer"
+        );
+
         votes[developer][msg.sender] = approve;
         hasVoted[developer][msg.sender] = true;
         voteCount[developer]++;
-        
+
         // Check if all developers have voted
         if (voteCount[developer] == developerList.length) {
             _finalizeVoting(developer);
@@ -60,23 +73,23 @@ contract UsageContract {
 
     function _finalizeVoting(address developer) private {
         uint256 approvalCount = 0;
-        
+
         // Count approval votes
         for (uint256 i = 0; i < developerList.length; i++) {
             if (votes[developer][developerList[i]]) {
                 approvalCount++;
             }
         }
-        
+
         // Require majority (>50%) approval
         bool approved = approvalCount * 2 > developerList.length;
-        
+
         if (approved) {
             developers[developer] = true;
             developerList.push(developer);
             emit DeveloperRegistered(developer);
         }
-        
+
         pendingRegistrations[developer] = false;
         voteCount[developer] = 0;
         for (uint256 i = 0; i < developerList.length; i++) {
@@ -120,17 +133,23 @@ contract UsageContract {
 
     function consume(uint256 amount) external returns (uint256) {
         emit Consumed(msg.sender, clientFunding[msg.sender]);
-        require(clientFunding[msg.sender] >= amount, "Insufficient client funding");
+        require(
+            clientFunding[msg.sender] >= amount,
+            "Insufficient client funding"
+        );
         require(developerList.length > 0, "No developers registered");
-        
+
         clientFunding[msg.sender] -= amount;
         _distributePaymentToDevelopers(amount);
-        
+
         return clientFunding[msg.sender];
     }
 
     function getDeveloperBalance() external view returns (uint256) {
-        require(developers[msg.sender], "Only developers can check their balance");
+        require(
+            developers[msg.sender],
+            "Only developers can check their balance"
+        );
         return developerBalances[msg.sender];
     }
 
@@ -138,23 +157,23 @@ contract UsageContract {
         require(developers[msg.sender], "Only developers can withdraw");
         uint256 balance = developerBalances[msg.sender];
         require(balance > 0, "No balance to withdraw");
-        
+
         developerBalances[msg.sender] = 0;
         _sendEther(msg.sender, balance);
     }
 
-    function purchaseSubscription(uint256 tierIndex) external payable {
-        require(msg.value > 0, "No payment provided");
-        
+    function purchaseSubscription() external payable {
+        require(msg.value >= subscriptionPriceInWei, "Insufficient payment");
+
         _ensureClientRegistered(msg.sender);
         _grantSubscription(msg.sender);
         _distributePaymentToDevelopers(msg.value);
-        
-        emit SubscriptionPurchased(msg.sender, tierIndex, msg.value);
+
+        emit SubscriptionPurchased(msg.sender);
     }
 
     function hasValidSubscription() external view returns (bool) {
-        return clientSubscriptions[msg.sender] && block.timestamp < subscriptionExpiry[msg.sender];
+        return clientSubscriptions[msg.sender];
     }
 
     // Private helper methods
@@ -167,18 +186,17 @@ contract UsageContract {
 
     function _grantSubscription(address client) private {
         clientSubscriptions[client] = true;
-        subscriptionExpiry[client] = block.timestamp + SUBSCRIPTION_DURATION;
     }
 
     function _distributePaymentToDevelopers(uint256 amount) private {
         if (developerList.length > 0) {
             uint256 share = amount / developerList.length;
             uint256 remainder = amount % developerList.length;
-            
+
             for (uint256 i = 0; i < developerList.length; i++) {
                 developerBalances[developerList[i]] += share;
             }
-            
+
             if (remainder > 0) {
                 developerBalances[developerList[0]] += remainder;
             }

@@ -1,7 +1,6 @@
 package web3.beaglegaze;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import java.math.BigInteger;
@@ -27,10 +26,9 @@ public class NFTSubscriptionIntegrationTest extends IntegrationTestBase {
         UsageContract_sol_UsageContract contract = deployContract(networkAddress);
         UsageContract_sol_UsageContract clientContract = loadContractAsClient(contract.getContractAddress());
 
-        BigInteger tierIndex = BigInteger.ZERO;
         BigInteger paymentAmount = BigInteger.valueOf(1000000000000000000L); // 1 ETH in wei
 
-        TransactionReceipt receipt = clientContract.purchaseSubscription(tierIndex, paymentAmount).send();
+        TransactionReceipt receipt = clientContract.purchaseSubscription(paymentAmount).send();
         
         assertThat(receipt.isStatusOK(), is(true));
         
@@ -49,9 +47,8 @@ public class NFTSubscriptionIntegrationTest extends IntegrationTestBase {
         MicroPaymentAspect.setProcessor(asyncProcessor);
 
         // Purchase NFT subscription
-        BigInteger tierIndex = BigInteger.ZERO;
         BigInteger paymentAmount = BigInteger.valueOf(1000000000000000000L); // 1 ETH in wei
-        clientContract.purchaseSubscription(tierIndex, paymentAmount).send();
+        clientContract.purchaseSubscription(paymentAmount).send();
 
         // Verify subscription is active
         boolean hasValidSubscription = clientContract.hasValidSubscription().send();
@@ -90,7 +87,8 @@ public class NFTSubscriptionIntegrationTest extends IntegrationTestBase {
         return UsageContract_sol_UsageContract.deploy(
                 Web3j.build(new HttpService(networkAddress)),
                 Credentials.create(SMART_CONTRACT_OWNER_PRIV_KEY),
-                new DefaultGasProvider()).send();
+                new DefaultGasProvider(),
+                BigInteger.ZERO).send(); // Default subscription price
     }
 
     private UsageContract_sol_UsageContract loadContract(String networkAddress, String contractAddress,

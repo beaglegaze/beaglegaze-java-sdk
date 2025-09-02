@@ -2,7 +2,6 @@ package web3.beaglegaze;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,21 +29,23 @@ public class ContractConsumerNFTTest {
         this.contractConsumer = new ContractConsumer(mockContract);
     }
 
+    /**
+     * Test that the contract consumer checks for a valid NFT subscription before
+     * consuming from the contract.
+     */
     @Test
     void shouldCheckForNFTSubscriptionBeforeConsumingFromContract() throws Exception {
-        // Setup: Client has valid NFT subscription
         when(mockContract.hasValidSubscription()).thenReturn(true);
         when(mockContract.consume(any(BigInteger.class))).thenReturn(true);
 
         BatchReadyEvent batchEvent = new BatchReadyEvent(BATCH_AMOUNT);
-        
-        // Execute
+
         CompletableFuture<Void> result = contractConsumer.handle(batchEvent);
-        
-        // Verify: Should check for NFT subscription and then consume
-        result.join(); // Should complete without exception
+
+        result.join();
         verify(mockContract, times(1)).hasValidSubscription();
         verify(mockContract, times(0)).consume(BigInteger.valueOf(BATCH_AMOUNT));
+
         assertFalse(contractConsumer.isInErrorState());
     }
 }
