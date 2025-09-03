@@ -33,11 +33,9 @@ public class NFTSubscriptionTierIntegrationTest extends IntegrationTestBase {
             clientContract.purchaseSubscription(ONE_ETH_IN_WEI).send();
         });
 
-        // Purchase with correct price
         TransactionReceipt purchaseReceipt = clientContract.purchaseSubscription(TWO_ETH_IN_WEI).send();
         assertThat(purchaseReceipt.isStatusOK(), is(true));
 
-        // Verify subscription is active
         boolean hasValidSubscription = clientContract.hasValidSubscription().send();
         assertThat(hasValidSubscription, is(true));
     }
@@ -47,11 +45,11 @@ public class NFTSubscriptionTierIntegrationTest extends IntegrationTestBase {
     }
 
     private UsageContract_sol_UsageContract deployContract(String networkAddress,
-            BigInteger subscriptionFee) throws Exception {
+            BigInteger withSubscriptionFee) throws Exception {
         return UsageContract_sol_UsageContract.deploy(
                 Web3j.build(new HttpService(networkAddress)),
                 Credentials.create(SMART_CONTRACT_OWNER_PRIV_KEY),
-                new DefaultGasProvider(), subscriptionFee).send();
+                new DefaultGasProvider(), withSubscriptionFee).send();
     }
 
     private UsageContract_sol_UsageContract loadContract(String networkAddress, String contractAddress,
