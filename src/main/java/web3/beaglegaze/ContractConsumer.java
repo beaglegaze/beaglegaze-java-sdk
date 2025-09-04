@@ -28,7 +28,13 @@ public class ContractConsumer implements MeteringEventObserver {
         }
 
         if (event instanceof BatchReadyEvent batchEvent) {
-            consumeFromContract(batchEvent);
+            if (contract.hasValidSubscription()) {
+                LOG.debug("Client has valid NFT subscription, proceeding with consumption");
+                return CompletableFuture.completedFuture(null);
+            } else {
+                consumeFromContract(batchEvent);
+            }
+            
         }
         return CompletableFuture.completedFuture(null);
     }

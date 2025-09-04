@@ -34,7 +34,7 @@ public class DeploySmartContractTest {
                                 Web3j.build(new HttpService("http://localhost:8545")),
                                 Credentials.create(
                                                 "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
-                                new DefaultGasProvider()).sendAsync().thenAccept(contract -> {
+                                new DefaultGasProvider(), BigInteger.ZERO).sendAsync().thenAccept(contract -> {
                                         smartContractAddress = contract.getContractAddress();
                                 }).join();
                 System.out.println("Smart contract deployed successfully.");

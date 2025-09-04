@@ -14,13 +14,6 @@ import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import web3.beaglegaze.AsyncBatchProcessor;
-import web3.beaglegaze.BatchMode;
-import web3.beaglegaze.BatchReadyEvent;
-import web3.beaglegaze.ContractConsumer;
-import web3.beaglegaze.MeteringEvent;
-import web3.beaglegaze.MeteringEventObserver;
-
 class AsyncPaymentProcessorTest {
 
     private static final long FIRST_CALL_AMOUNT = 50L;

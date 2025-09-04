@@ -17,10 +17,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.verification.VerificationMode;
 import org.web3j.crypto.Credentials;
 
-import web3.beaglegaze.BatchReadyEvent;
-import web3.beaglegaze.ContractConsumer;
-import web3.beaglegaze.SmartContract;
-
 public class ContractConsumerTest {
 	
 	private static final long BATCH_AMOUNT = 100L;

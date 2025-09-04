@@ -31,7 +31,7 @@ public class AsyncPaymentProcessorIntegrationTest extends IntegrationTestBase {
         ownerLoadedContract = UsageContract_sol_UsageContract.deploy(
                 Web3j.build(new HttpService(networkAddress)),
                 Credentials.create(SMART_CONTRACT_OWNER),
-                new DefaultGasProvider()).send();
+                new DefaultGasProvider(), BigInteger.ZERO).send();
         asyncProcessor = new AsyncBatchProcessor(BatchMode.OFF);
     }
 
