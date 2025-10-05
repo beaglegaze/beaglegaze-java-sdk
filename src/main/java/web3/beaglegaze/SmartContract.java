@@ -55,7 +55,9 @@ public class SmartContract {
     private void logClientFundingIfLow() {
         contract.getClientFunding().sendAsync().thenAccept(value -> {
             if (value.compareTo(BigInteger.ZERO) < lowFundingThreshold) {
-                LOG.warn("Client funding is low. Consider refunding to avoid interruptions.");
+                LOG.warn("Client funding is low. Refund the contract to avoid interruptions.");
+            } else {
+                LOG.info("Current client funding: {} wei", value);
             }
         });
     }
