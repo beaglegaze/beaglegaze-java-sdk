@@ -1,0 +1,3 @@
+[submodule "src/main/resources/beaglegaze-contracts"]
+	path = src/main/resources/beaglegaze-contracts
+	url = https://github.com/beaglegaze/beaglegaze-contracts.git
