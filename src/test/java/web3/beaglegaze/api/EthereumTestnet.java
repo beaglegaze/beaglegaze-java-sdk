@@ -8,7 +8,7 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.DefaultGasProvider;
 
-import web3.beaglegaze.UsageContract_sol_UsageContract;
+import web3.beaglegaze.Beaglegaze_sol_Beaglegaze;
 
 public class EthereumTestnet {
 
@@ -26,7 +26,7 @@ public class EthereumTestnet {
         Web3j web3j = Web3j.build(new HttpService(ethereumNetworkUrl));
         Credentials credentials = Credentials.create(privateKey);
 
-        UsageContract_sol_UsageContract contract = UsageContract_sol_UsageContract.load(
+        Beaglegaze_sol_Beaglegaze contract = Beaglegaze_sol_Beaglegaze.load(
                 address, web3j, credentials, new DefaultGasProvider());
 
         contract.fund(amount).send();
@@ -39,7 +39,7 @@ public class EthereumTestnet {
             Web3j web3j = Web3j.build(new HttpService(ethereumNetworkUrl));
             Credentials credentials = Credentials.create(privateKey);
 
-            UsageContract_sol_UsageContract contract = UsageContract_sol_UsageContract.load(
+            Beaglegaze_sol_Beaglegaze contract = Beaglegaze_sol_Beaglegaze.load(
                     address, web3j, credentials, new DefaultGasProvider());
 
             contract.fund(amount).send();

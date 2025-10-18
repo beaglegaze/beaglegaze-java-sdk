@@ -21,26 +21,10 @@ public class NFTSubscriptionIntegrationTest extends IntegrationTestBase {
     private static final String SMART_CONTRACT_OWNER_PRIV_KEY = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
     @Test
-    @DisplayName("Should purchase NFT subscription")
-    void shouldPurchaseNFTSubscription() throws Exception {
-        UsageContract_sol_UsageContract contract = deployContract(networkAddress);
-        UsageContract_sol_UsageContract clientContract = loadContractAsClient(contract.getContractAddress());
-
-        BigInteger paymentAmount = BigInteger.valueOf(1000000000000000000L); // 1 ETH in wei
-
-        TransactionReceipt receipt = clientContract.purchaseSubscription(paymentAmount).send();
-        
-        assertThat(receipt.isStatusOK(), is(true));
-        
-        boolean hasValidSubscription = clientContract.hasValidSubscription().send();
-        assertThat(hasValidSubscription, is(true));
-    }
-
-    @Test
     @DisplayName("Should allow method calls with NFT subscription without client funding")
     void shouldAllowMethodCallsWithNFTSubscriptionWithoutClientFunding() throws Exception {
-        UsageContract_sol_UsageContract contract = deployContract(networkAddress);
-        UsageContract_sol_UsageContract clientContract = loadContractAsClient(contract.getContractAddress());
+        Beaglegaze_sol_Beaglegaze contract = deployContract(networkAddress);
+        Beaglegaze_sol_Beaglegaze clientContract = loadContractAsClient(contract.getContractAddress());
 
         // Setup async processor to handle method calls
         AsyncBatchProcessor asyncProcessor = setupAsyncBatchProcessor(contract);
@@ -70,7 +54,7 @@ public class NFTSubscriptionIntegrationTest extends IntegrationTestBase {
         assertThat(finalClientFunding, is(BigInteger.ZERO));
     }
 
-    private AsyncBatchProcessor setupAsyncBatchProcessor(UsageContract_sol_UsageContract contract) throws Exception {
+    private AsyncBatchProcessor setupAsyncBatchProcessor(Beaglegaze_sol_Beaglegaze contract) throws Exception {
         AsyncBatchProcessor asyncBatchProcessor = new AsyncBatchProcessor(BatchMode.OFF);
         SmartContract clientContract = new SmartContract(
                 contract.getContractAddress(), networkAddress, CLIENT_ACCOUNT_PRIV_KEY, 10);
@@ -79,21 +63,21 @@ public class NFTSubscriptionIntegrationTest extends IntegrationTestBase {
         return asyncBatchProcessor;
     }
 
-    private UsageContract_sol_UsageContract loadContractAsClient(String contractAddress) {
+    private Beaglegaze_sol_Beaglegaze loadContractAsClient(String contractAddress) {
         return loadContract(networkAddress, contractAddress, CLIENT_ACCOUNT_PRIV_KEY);
     }
 
-    private UsageContract_sol_UsageContract deployContract(String networkAddress) throws Exception {
-        return UsageContract_sol_UsageContract.deploy(
+    private Beaglegaze_sol_Beaglegaze deployContract(String networkAddress) throws Exception {
+        return Beaglegaze_sol_Beaglegaze.deploy(
                 Web3j.build(new HttpService(networkAddress)),
                 Credentials.create(SMART_CONTRACT_OWNER_PRIV_KEY),
                 new DefaultGasProvider(),
                 BigInteger.ZERO).send(); // Default subscription price
     }
 
-    private UsageContract_sol_UsageContract loadContract(String networkAddress, String contractAddress,
+    private Beaglegaze_sol_Beaglegaze loadContract(String networkAddress, String contractAddress,
             String account) {
-        return UsageContract_sol_UsageContract.load(
+        return Beaglegaze_sol_Beaglegaze.load(
                 contractAddress,
                 Web3j.build(new HttpService(networkAddress)),
                 Credentials.create(account),

@@ -22,7 +22,7 @@ import web3.beaglegaze.api.IntegrationTestBase;
  */
 class MicroPaymentIntegrationTest extends IntegrationTestBase {
 
-    private UsageContract_sol_UsageContract contract;
+    private Beaglegaze_sol_Beaglegaze contract;
 
     @BeforeEach
     void setupEach() throws Exception {
@@ -111,16 +111,16 @@ class MicroPaymentIntegrationTest extends IntegrationTestBase {
         return asyncProcessor;
     }
 
-    private UsageContract_sol_UsageContract deployContract() throws Exception {
-        return UsageContract_sol_UsageContract
+    private Beaglegaze_sol_Beaglegaze deployContract() throws Exception {
+        return Beaglegaze_sol_Beaglegaze
                 .deploy(Web3j.build(new HttpService(networkAddress)),
                         Credentials.create(SMART_CONTRACT_OWNER),
                         new DefaultGasProvider(), BigInteger.ZERO)
                 .send();
     }
 
-    private UsageContract_sol_UsageContract loadContractForClient() {
-        return UsageContract_sol_UsageContract.load(
+    private Beaglegaze_sol_Beaglegaze loadContractForClient() {
+        return Beaglegaze_sol_Beaglegaze.load(
                 contract.getContractAddress(),
                 Web3j.build(new HttpService(networkAddress)),
                 Credentials.create(CLIENT_ACCOUNT),

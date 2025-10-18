@@ -20,6 +20,14 @@ beaglegaze uses a sophisticated architecture combining:
 - **Multi-language SDKs**: Native integration for different platforms
 - **Real-time Monitoring**: Live tracking of usage and payments
 
+## Development
+
+Compile the Smart Contract To Java Wrapper using Web3j:
+
+```bash
+web3j generate solidity -b src/main/resources/beaglegaze-contracts/beaglegaze_sol_Beaglegaze.bin -a src/main/resources/beaglegaze-contracts_sol_Beaglegaze.abi -o src/main/java -p web3.beaglegaze
+```
+
 ## 📄 License
 
 This project is licensed under the LGPL v3 License - see the [LICENSE](LICENSE) file for details.

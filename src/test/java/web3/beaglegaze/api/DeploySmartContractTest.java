@@ -9,7 +9,7 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.DefaultGasProvider;
 
-import web3.beaglegaze.UsageContract_sol_UsageContract;
+import web3.beaglegaze.Beaglegaze_sol_Beaglegaze;
 
 @Disabled("This test deploys the smart contract and should not be run in a CI environment.")
 public class DeploySmartContractTest {
@@ -30,7 +30,7 @@ public class DeploySmartContractTest {
         }
 
         private void deploySmartContract() {
-                UsageContract_sol_UsageContract.deploy(
+                Beaglegaze_sol_Beaglegaze.deploy(
                                 Web3j.build(new HttpService("http://localhost:8545")),
                                 Credentials.create(
                                                 "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
@@ -65,7 +65,7 @@ public class DeploySmartContractTest {
                 Web3j web3j = Web3j.build(new HttpService("http://localhost:8545"));
                 Credentials credentials = Credentials
                                 .create("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-                UsageContract_sol_UsageContract contract = UsageContract_sol_UsageContract.load(
+                Beaglegaze_sol_Beaglegaze contract = Beaglegaze_sol_Beaglegaze.load(
                                 smartContractAddress,
                                 web3j,
                                 credentials,
@@ -90,7 +90,7 @@ public class DeploySmartContractTest {
                 Web3j web3j = Web3j.build(new HttpService("http://localhost:8545"));
                 Credentials credentials = Credentials
                                 .create("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-                UsageContract_sol_UsageContract contract = UsageContract_sol_UsageContract
+                Beaglegaze_sol_Beaglegaze contract = Beaglegaze_sol_Beaglegaze
                                 .load(smartContractAddress,
                                                 web3j,
                                                 credentials,

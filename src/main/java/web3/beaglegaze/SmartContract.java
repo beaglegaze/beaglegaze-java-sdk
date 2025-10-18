@@ -19,7 +19,7 @@ import org.web3j.tx.gas.DefaultGasProvider;
  */
 public class SmartContract {
 
-    private final UsageContract_sol_UsageContract contract;
+    private final Beaglegaze_sol_Beaglegaze contract;
     private final Object transactionLock = new Object();
 
     private static final Logger LOG = LoggerFactory.getLogger(SmartContract.class);
@@ -28,7 +28,7 @@ public class SmartContract {
     public SmartContract(String contractAddress, String networkAddress, String clientPrivateKey,
             int lowFundingThreshold) throws Exception {
         this.lowFundingThreshold = lowFundingThreshold;
-        contract = UsageContract_sol_UsageContract.load(
+        contract = Beaglegaze_sol_Beaglegaze.load(
                 contractAddress,
                 Web3j.build(new HttpService(networkAddress)),
                 Credentials.create(clientPrivateKey),

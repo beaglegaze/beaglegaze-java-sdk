@@ -24,11 +24,11 @@ import web3.beaglegaze.api.IntegrationTestBase;
 public class AsyncPaymentProcessorIntegrationTest extends IntegrationTestBase {
 
     private AsyncBatchProcessor asyncProcessor;
-    private UsageContract_sol_UsageContract ownerLoadedContract;
+    private Beaglegaze_sol_Beaglegaze ownerLoadedContract;
 
     @BeforeEach
     void setUp() throws Exception {
-        ownerLoadedContract = UsageContract_sol_UsageContract.deploy(
+        ownerLoadedContract = Beaglegaze_sol_Beaglegaze.deploy(
                 Web3j.build(new HttpService(networkAddress)),
                 Credentials.create(SMART_CONTRACT_OWNER),
                 new DefaultGasProvider(), BigInteger.ZERO).send();
